@@ -8,8 +8,15 @@ development:
   database: storage/development.sqlite3
 
 test:
-  <<: *default
-  database: storage/test.sqlite3
+  <% if ENV['DATABASE_URL'] %>
+    adapter: postgresql
+    encoding: unicode
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+    url: <%= ENV['DATABASE_URL'].sub(/\/[^\/]*$/, '/jpwalk_test') %>
+  <% else %>
+    <<: *default
+    database: storage/test.sqlite3
+  <% end %>
 
 production:
   primary: &primary_production
