@@ -16,11 +16,10 @@ production:
     adapter: postgresql
     encoding: unicode
     pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-    database: <%= ENV['DATABASE_NAME'] || 'jpwalk_production' %>
-    username: <%= ENV['DATABASE_USER'] || 'jpwalk' %>
-    password: <%= ENV['DATABASE_PASSWORD'] %>
-    host: <%= ENV['DATABASE_HOST'] || 'localhost' %>
-    port: <%= ENV['DATABASE_PORT'] || 5432 %>
+    username: <%= ENV['DB_USER'] %>
+    password: <%= ENV['DB_PASSWORD'] %>
+    host: <%= ENV['DB_HOST'] %>
+    port: <%= ENV['DB_PORT'] || 5432 %>
   cache:
     <<: *primary_production
     database: <%= ENV['CACHE_DATABASE_NAME'] || 'jpwalk_production_cache' %>
