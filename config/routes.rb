@@ -11,7 +11,7 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "walking_sessions#index"
-  
+
   resources :walking_sessions do
     member do
       post :complete
