@@ -1,0 +1,84 @@
+<div class="container mx-auto px-4 py-8 max-w-6xl">
+  <div class="text-center mb-8">
+    <h1 class="text-4xl font-bold text-gray-900 mb-2">Japanese Walking</h1>
+    <p class="text-lg text-gray-600">インターバル速歩で健康習慣を身につけよう</p>
+  </div>
+
+  <% if @current_session %>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-semibold text-blue-900">現在のセッション進行中</h2>
+          <p class="text-blue-700 mt-1">開始時刻: <%= @current_session.started_at.strftime("%H:%M") %></p>
+        </div>
+        <%= link_to "セッションを続ける", walking_session_path(@current_session), 
+            class: "bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition" %>
+      </div>
+    </div>
+  <% else %>
+    <div class="text-center mb-8">
+      <%= link_to new_walking_session_path, 
+          class: "inline-block bg-green-600 text-white text-xl px-12 py-6 rounded-full hover:bg-green-700 transition transform hover:scale-105 shadow-lg" do %>
+        <span class="flex items-center">
+          <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          ウォーキングを開始
+        </span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="mb-12" data-controller="weekly-progress">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6">今週の進捗</h2>
+    <div data-weekly-progress-target="progress" class="mb-6"></div>
+    <div data-weekly-progress-target="stats"></div>
+    <div class="bg-white rounded-lg shadow p-6 mt-6">
+      <h3 class="text-lg font-semibold mb-4">日別活動</h3>
+      <div data-weekly-progress-target="chart"></div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-xl font-semibold text-gray-900">最近のセッション</h2>
+    </div>
+    <div class="divide-y divide-gray-200">
+      <% @walking_sessions.each do |session| %>
+        <div class="px-6 py-4 hover:bg-gray-50 transition">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm text-gray-500">
+                <%= session.started_at.strftime("%Y年%m月%d日 %H:%M") %>
+              </div>
+              <div class="mt-1 flex items-center space-x-4">
+                <span class="text-sm font-medium text-gray-900">
+                  <%= session.duration_in_minutes %> 分
+                </span>
+                <span class="text-sm text-gray-600">
+                  <%= session.calculate_distance_from_points.round(2) %> km
+                </span>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                       <%= session.status == 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' %>">
+                  <%= session.status == 'completed' ? '完了' : session.status %>
+                </span>
+              </div>
+            </div>
+            <%= link_to "詳細", session, class: "text-blue-600 hover:text-blue-800" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mt-12 bg-gray-50 rounded-lg p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-3">インターバル速歩とは？</h3>
+    <div class="space-y-2 text-gray-600">
+      <p>🏃 3分間の速歩き + 🚶 3分間のゆっくり歩きを交互に5セット</p>
+      <p>⏱️ 合計30分のウォーキング</p>
+      <p>📅 週4日以上の実施が目標</p>
+      <p>💪 筋力・持久力の向上と生活習慣病の予防に効果的</p>
+    </div>
+  </div>
+</div>

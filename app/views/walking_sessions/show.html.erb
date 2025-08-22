@@ -1,0 +1,120 @@
+<div class="container mx-auto px-4 py-8 max-w-6xl">
+  <div class="mb-6">
+    <%= link_to "← 戻る", root_path, class: "text-blue-600 hover:text-blue-800" %>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">ウォーキングセッション</h1>
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium 
+             <%= @walking_session.status == 'completed' ? 'bg-green-100 text-green-800' : 
+                 @walking_session.status == 'active' ? 'bg-blue-100 text-blue-800' : 
+                 'bg-yellow-100 text-yellow-800' %>">
+        <%= @walking_session.status == 'completed' ? '完了' : 
+            @walking_session.status == 'active' ? '進行中' : 
+            @walking_session.status == 'paused' ? '一時停止' : @walking_session.status %>
+      </span>
+    </div>
+
+    <% if @walking_session.status == 'active' || @walking_session.status == 'paused' %>
+      <div class="bg-gray-50 rounded-lg p-8 mb-6" 
+           data-controller="walking-timer"
+           data-walking-timer-session-id-value="<%= @walking_session.id %>">
+        
+        <div class="text-center mb-6">
+          <div class="text-5xl font-bold text-gray-900 mb-2" data-walking-timer-target="timer">00:00</div>
+          <div class="text-lg text-gray-600" data-walking-timer-target="setCount">セット 1 / 5</div>
+        </div>
+
+        <div class="text-center mb-6">
+          <div data-walking-timer-target="intervalType" class="text-2xl font-bold">準備中...</div>
+          <div data-walking-timer-target="status" class="text-gray-600 mt-2">タップして開始</div>
+        </div>
+
+        <div class="text-center mb-6">
+          <div class="text-lg text-gray-600">走行距離</div>
+          <div class="text-3xl font-bold text-blue-600" data-walking-timer-target="distance">0.00 km</div>
+        </div>
+
+        <div class="flex justify-center space-x-4">
+          <button data-walking-timer-target="startBtn"
+                  data-action="click->walking-timer#startTimer"
+                  class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition">
+            開始
+          </button>
+          <button data-walking-timer-target="pauseBtn"
+                  data-action="click->walking-timer#pause"
+                  class="hidden bg-yellow-600 text-white px-8 py-3 rounded-lg hover:bg-yellow-700 transition">
+            一時停止
+          </button>
+          <button data-walking-timer-target="completeBtn"
+                  data-action="click->walking-timer#complete"
+                  class="hidden bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 transition">
+            終了
+          </button>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="text-sm text-gray-600 mb-1">開始時刻</div>
+        <div class="text-lg font-semibold text-gray-900">
+          <%= @walking_session.started_at.strftime("%Y年%m月%d日 %H:%M") %>
+        </div>
+      </div>
+      
+      <% if @walking_session.ended_at %>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <div class="text-sm text-gray-600 mb-1">終了時刻</div>
+          <div class="text-lg font-semibold text-gray-900">
+            <%= @walking_session.ended_at.strftime("%H:%M") %>
+          </div>
+        </div>
+      <% end %>
+      
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="text-sm text-gray-600 mb-1">所要時間</div>
+        <div class="text-lg font-semibold text-gray-900">
+          <%= @walking_session.duration_in_minutes %> 分
+        </div>
+      </div>
+      
+      <div class="bg-gray-50 rounded-lg p-4">
+        <div class="text-sm text-gray-600 mb-1">走行距離</div>
+        <div class="text-lg font-semibold text-blue-600">
+          <%= @walking_session.calculate_distance_from_points.round(2) %> km
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if @location_points.any? %>
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">ルートマップ</h2>
+      <div class="h-96 bg-gray-100 rounded-lg" 
+           data-controller="map"
+           data-map-points-value="<%= @location_points.to_json %>">
+      </div>
+      
+      <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
+        <div class="flex items-center">
+          <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
+          <span>速歩き区間</span>
+        </div>
+        <div class="flex items-center">
+          <div class="w-4 h-4 bg-blue-500 rounded mr-2"></div>
+          <span>ゆっくり歩き区間</span>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="mt-6 flex justify-center space-x-4">
+    <% if @walking_session.status == 'completed' %>
+      <%= link_to "新しいセッションを開始", new_walking_session_path, 
+          class: "bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition" %>
+    <% end %>
+  </div>
+</div>
+

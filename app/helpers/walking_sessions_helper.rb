@@ -1,0 +1,2 @@
+module WalkingSessionsHelper
+end
