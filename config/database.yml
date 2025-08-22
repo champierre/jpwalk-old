@@ -12,6 +12,32 @@ test:
   database: storage/test.sqlite3
 
 production:
-  <<: *default
-  adapter: postgresql
-  url: <%= ENV['DATABASE_URL'] %>
+  primary: &primary_production
+    adapter: postgresql
+    encoding: unicode
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+    url: <%= ENV['DATABASE_URL'] %>
+    # Fallback configuration if DATABASE_URL is not available
+    database: <%= ENV['DATABASE_NAME'] || 'jpwalk_production' %>
+    username: <%= ENV['DATABASE_USER'] %>
+    password: <%= ENV['DATABASE_PASSWORD'] %>
+    host: <%= ENV['DATABASE_HOST'] || 'localhost' %>
+    port: <%= ENV['DATABASE_PORT'] || 5432 %>
+    
+  # Solid Cache database (Rails 8)
+  cache:
+    <<: *primary_production
+    database: <%= ENV['CACHE_DATABASE_NAME'] || "#{ENV['DATABASE_NAME'] || 'jpwalk_production'}_cache" %>
+    migrations_paths: db/cache_migrate
+    
+  # Solid Queue database (Rails 8) 
+  queue:
+    <<: *primary_production
+    database: <%= ENV['QUEUE_DATABASE_NAME'] || "#{ENV['DATABASE_NAME'] || 'jpwalk_production'}_queue" %>
+    migrations_paths: db/queue_migrate
+    
+  # Solid Cable database (Rails 8)
+  cable:
+    <<: *primary_production
+    database: <%= ENV['CABLE_DATABASE_NAME'] || "#{ENV['DATABASE_NAME'] || 'jpwalk_production'}_cable" %>
+    migrations_paths: db/cable_migrate
