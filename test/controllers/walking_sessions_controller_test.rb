@@ -18,12 +18,14 @@ class WalkingSessionsControllerTest < ActionDispatch::IntegrationTest
     session_with_points.location_points.create!(
       latitude: 35.6762,
       longitude: 139.6503,
-      recorded_at: 30.minutes.ago
+      recorded_at: 30.minutes.ago,
+      interval_type: "fast"
     )
     session_with_points.location_points.create!(
       latitude: 35.6762,
       longitude: 139.6504,
-      recorded_at: 20.minutes.ago
+      recorded_at: 20.minutes.ago,
+      interval_type: "slow"
     )
 
     # Verify we have location points
@@ -41,9 +43,8 @@ class WalkingSessionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should handle deletion of non-existent session" do
-    assert_raises(ActiveRecord::RecordNotFound) do
-      delete walking_session_path(99999)
-    end
+    delete walking_session_path(99999)
+    assert_response :not_found
   end
 
   test "should redirect to root path after successful deletion" do
