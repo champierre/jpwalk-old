@@ -28,12 +28,13 @@ class WalkingSessionsControllerTest < ActionDispatch::IntegrationTest
       interval_type: "slow"
     )
 
-    # Verify we have location points
-    assert_equal 2, session_with_points.location_points.count
+    # Count total location points for this session (includes fixture data)
+    initial_count = session_with_points.location_points.count
+    total_location_points = LocationPoint.count
 
     # Delete the session (should cascade delete location points)
     assert_difference("WalkingSession.count", -1) do
-      assert_difference("LocationPoint.count", -2) do
+      assert_difference("LocationPoint.count", -initial_count) do
         delete walking_session_path(session_with_points)
       end
     end
