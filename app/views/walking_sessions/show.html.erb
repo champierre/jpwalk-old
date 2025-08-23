@@ -115,6 +115,11 @@
       <%= link_to "新しいセッションを開始", new_walking_session_path, 
           class: "bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition" %>
     <% end %>
+    <%= link_to "このセッションを削除", @walking_session, method: :delete, 
+        data: { 
+          confirm: "このセッションを削除してもよろしいですか？\n\n日時: #{@walking_session.started_at.strftime('%Y年%m月%d日 %H:%M')}\n時間: #{@walking_session.duration_in_minutes}分\n距離: #{@walking_session.calculate_distance_from_points.round(2)}km\n\nこの操作は取り消せません。" 
+        }, 
+        class: "bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition" %>
   </div>
 </div>
 

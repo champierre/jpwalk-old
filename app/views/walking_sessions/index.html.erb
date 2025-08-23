@@ -68,7 +68,14 @@
                 </span>
               </div>
             </div>
-            <%= link_to "詳細", session, class: "text-blue-600 hover:text-blue-800" %>
+            <div class="flex space-x-2">
+              <%= link_to "詳細", session, class: "text-blue-600 hover:text-blue-800" %>
+              <%= link_to "削除", session, method: :delete, 
+                  data: { 
+                    confirm: "このセッションを削除してもよろしいですか？\n\n日時: #{session.started_at.strftime('%Y年%m月%d日 %H:%M')}\n時間: #{session.duration_in_minutes}分\n距離: #{session.calculate_distance_from_points.round(2)}km\n\nこの操作は取り消せません。" 
+                  }, 
+                  class: "text-red-600 hover:text-red-800" %>
+            </div>
           </div>
         </div>
       <% end %>

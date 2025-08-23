@@ -1,5 +1,5 @@
 class WalkingSessionsController < ApplicationController
-  before_action :set_walking_session, only: [ :show, :complete, :pause, :resume, :add_location ]
+  before_action :set_walking_session, only: [ :show, :complete, :pause, :resume, :add_location, :destroy ]
 
   def index
     @walking_sessions = WalkingSession.order(started_at: :desc).limit(10)
@@ -78,6 +78,11 @@ class WalkingSessionsController < ApplicationController
 
   def update
     # Not needed for now
+  end
+
+  def destroy
+    @walking_session.destroy
+    redirect_to root_path, notice: "セッションを削除しました。"
   end
 
   private
