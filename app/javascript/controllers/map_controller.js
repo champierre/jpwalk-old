@@ -118,7 +118,8 @@ export default class extends Controller {
             slowSegments.push([...currentSegment])
           }
         }
-        currentSegment = [coord]
+        // Start new segment with the last point from previous segment to maintain continuity
+        currentSegment = currentSegment.length > 0 ? [currentSegment[currentSegment.length - 1], coord] : [coord]
         currentType = point.interval_type
       } else {
         currentSegment.push(coord)
