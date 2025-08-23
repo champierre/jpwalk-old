@@ -56,37 +56,48 @@
       </div>
     <% end %>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-gray-50 rounded-lg p-4">
-        <div class="text-sm text-gray-600 mb-1">開始時刻</div>
-        <div class="text-lg font-semibold text-gray-900">
-          <%= @walking_session.started_at.strftime("%Y年%m月%d日 %H:%M") %>
-        </div>
-      </div>
-      
-      <% if @walking_session.ended_at %>
+    <% if @walking_session.status == 'completed' %>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-gray-50 rounded-lg p-4">
-          <div class="text-sm text-gray-600 mb-1">終了時刻</div>
+          <div class="text-sm text-gray-600 mb-1">開始時刻</div>
           <div class="text-lg font-semibold text-gray-900">
-            <%= @walking_session.ended_at.strftime("%H:%M") %>
+            <%= @walking_session.started_at.strftime("%Y年%m月%d日 %H:%M") %>
           </div>
         </div>
-      <% end %>
-      
-      <div class="bg-gray-50 rounded-lg p-4">
-        <div class="text-sm text-gray-600 mb-1">所要時間</div>
-        <div class="text-lg font-semibold text-gray-900">
-          <%= @walking_session.duration_in_minutes %> 分
+        
+        <% if @walking_session.ended_at %>
+          <div class="bg-gray-50 rounded-lg p-4">
+            <div class="text-sm text-gray-600 mb-1">終了時刻</div>
+            <div class="text-lg font-semibold text-gray-900">
+              <%= @walking_session.ended_at.strftime("%H:%M") %>
+            </div>
+          </div>
+        <% end %>
+        
+        <div class="bg-gray-50 rounded-lg p-4">
+          <div class="text-sm text-gray-600 mb-1">所要時間</div>
+          <div class="text-lg font-semibold text-gray-900">
+            <%= @walking_session.duration_in_minutes %> 分
+          </div>
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-4">
+          <div class="text-sm text-gray-600 mb-1">走行距離</div>
+          <div class="text-lg font-semibold text-blue-600">
+            <%= @walking_session.calculate_distance_from_points.round(2) %> km
+          </div>
         </div>
       </div>
-      
-      <div class="bg-gray-50 rounded-lg p-4">
-        <div class="text-sm text-gray-600 mb-1">走行距離</div>
-        <div class="text-lg font-semibold text-blue-600">
-          <%= @walking_session.calculate_distance_from_points.round(2) %> km
+    <% else %>
+      <div class="grid grid-cols-1 gap-6">
+        <div class="bg-gray-50 rounded-lg p-4">
+          <div class="text-sm text-gray-600 mb-1">開始時刻</div>
+          <div class="text-lg font-semibold text-gray-900">
+            <%= @walking_session.started_at.strftime("%Y年%m月%d日 %H:%M") %>
+          </div>
         </div>
       </div>
-    </div>
+    <% end %>
   </div>
 
   <% if @location_points.any? %>
@@ -110,16 +121,15 @@
     </div>
   <% end %>
 
-  <div class="mt-6 flex justify-center space-x-4">
-    <% if @walking_session.status == 'completed' %>
-      <%= link_to "新しいセッションを開始", new_walking_session_path, 
-          class: "bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition" %>
-    <% end %>
-    <%= link_to "このセッションを削除", @walking_session, method: :delete, 
-        data: { 
-          confirm: "このセッションを削除してもよろしいですか？\n\n日時: #{@walking_session.started_at.strftime('%Y年%m月%d日 %H:%M')}\n時間: #{@walking_session.duration_in_minutes}分\n距離: #{@walking_session.calculate_distance_from_points.round(2)}km\n\nこの操作は取り消せません。" 
-        }, 
-        class: "bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition" %>
-  </div>
+  <% if @walking_session.status == 'completed' %>
+    <div class="mt-6 flex justify-center">
+      <%= link_to "このセッションを削除", @walking_session, 
+          data: { 
+            "turbo-method": :delete,
+            confirm: "このセッションを削除してもよろしいですか？\n\n日時: #{@walking_session.started_at.strftime('%Y年%m月%d日 %H:%M')}\n時間: #{@walking_session.duration_in_minutes}分\n距離: #{@walking_session.calculate_distance_from_points.round(2)}km\n\nこの操作は取り消せません。" 
+          }, 
+          class: "bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition" %>
+    </div>
+  <% end %>
 </div>
 
