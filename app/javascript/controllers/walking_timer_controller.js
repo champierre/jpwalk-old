@@ -30,6 +30,8 @@ export default class extends Controller {
   disconnect() {
     this.stopTimer()
     this.stopGPS()
+    // Reset background color when component is destroyed
+    document.body.style.backgroundColor = ''
   }
   
   start() {
@@ -71,6 +73,8 @@ export default class extends Controller {
       this.isPaused = false
       this.startGPS()
       this.updateDisplay()
+      // Initialize background color when starting
+      this.updateBackgroundColor()
       this.timer = setInterval(() => {
         this.elapsedTime++
         this.checkInterval()
@@ -116,6 +120,9 @@ export default class extends Controller {
     this.stopTimer()
     this.stopGPS()
     
+    // Reset background color when completing session
+    document.body.style.backgroundColor = ''
+    
     fetch(`/walking_sessions/${this.sessionIdValue}/complete`, {
       method: 'POST',
       headers: {
@@ -135,6 +142,8 @@ export default class extends Controller {
       this.timer = null
     }
     this.isRunning = false
+    // Reset background color when stopping timer
+    document.body.style.backgroundColor = ''
   }
   
   checkInterval() {
@@ -151,6 +160,7 @@ export default class extends Controller {
     const newInterval = intervalTime < this.intervalDurationValue ? 'fast' : 'slow'
     if (newInterval !== this.currentInterval) {
       this.currentInterval = newInterval
+      this.updateBackgroundColor()
       this.playSound()
       this.showNotification()
     }
@@ -173,6 +183,25 @@ export default class extends Controller {
       : this.intervalDurationValue * 2 - intervalTime
       
     this.statusTarget.textContent = `残り ${Math.floor(currentIntervalRemaining / 60)}:${String(currentIntervalRemaining % 60).padStart(2, '0')}`
+    
+    // Update background color to reflect current walking mode
+    this.updateBackgroundColor()
+  }
+  
+  updateBackgroundColor() {
+    // Change the entire page background color based on walking mode
+    if (this.currentInterval === 'fast') {
+      // Red/warm background for fast walking
+      document.body.style.backgroundColor = '#fef2f2' // red-50
+      document.body.style.transition = 'background-color 0.5s ease'
+    } else if (this.currentInterval === 'slow') {
+      // Blue/cool background for slow walking  
+      document.body.style.backgroundColor = '#eff6ff' // blue-50
+      document.body.style.transition = 'background-color 0.5s ease'
+    } else {
+      // Default background when not in a walking mode
+      document.body.style.backgroundColor = ''
+    }
   }
   
   updateButtons() {
